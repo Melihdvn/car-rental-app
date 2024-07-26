@@ -21,25 +21,4 @@ class VehicleController extends Controller
             ], 200);
         }
     }
-
-    public function updateAvailability(Request $request){
-        $validator = Validator::make($request->all(), [
-            'vehicle_id' => 'required',
-            'availability' => 'required',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Geçersiz bilgiler',
-                'errors' => $validator->errors()
-            ], 200);
-        }
-
-        Vehicle::updateAvailability($request->vehicle_id, $request->availability);
-
-        return response()->json([
-            'success' => true
-        ], 200);
-}
 }

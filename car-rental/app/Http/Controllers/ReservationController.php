@@ -44,7 +44,6 @@ class ReservationController extends Controller
             return response()->json(['success' => false,$validator->errors()], 200);
         }
 
-        Vehicle::updateAvailability($request->vehicle_id, 0);
         $result = Reservation::createReservation($request->user_id, $request->vehicle_id, $request->start_date, $request->end_date, $request->total_price);
 
         if ($result) {
@@ -82,4 +81,33 @@ class ReservationController extends Controller
         }
     }
 
+    public function rentCar(Request $request){
+        $validator = Validator::make($request->all(), [
+            'reservation_id' => 'required|exists:reservations,reservation_id',
+            'credit_card_number' => 'required|min:16'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Geçersiz bilgiler',
+                'errors' => $validator->errors()
+            ], 200);
+        }
+
+        $isSuccess = Reservation::rentCar($request->reservation_id);
+
+        if($isSuccess){
+        return response()->json([
+            'success' => true,
+            'message' => 'Araç başarıyla kiralandı.',
+        ], 200);
+    }
+    else {
+        return response()->json([
+            'success' => false,
+            'message' => 'Araç zaten kiralanmış.',
+        ], 200);
+    }
+}
 }

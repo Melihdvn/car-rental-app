@@ -138,7 +138,7 @@ class AuthController extends Controller
         $codeEntry = VerificationCode::codeEntry($request->email, $request->code, 'password');
 
         if ($codeEntry) {
-            User::changePassword($request->email, $request->password);
+            User::updatePassword($request->email, $request->password);
 
             return response()->json([
                 'success' => true,

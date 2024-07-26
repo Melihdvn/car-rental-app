@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ReservationController;
+use App\Http\Controllers\ReservationServiceController;
 use App\Http\Controllers\VehicleController;
 
 
@@ -20,7 +21,11 @@ Route::post('/changename', [UserController::class, 'changeName']);
 Route::post('/createreservation', [ReservationController::class, 'createReservation']);
 Route::post('/getreservations', [ReservationController::class, 'getReservations']);
 
+Route::post('/rentcar', [ReservationController::class, 'rentCar']);
+
 Route::get('/getvehicles', [VehicleController::class, 'getVehicles']);
 
 Route::post('/getvehiclesondate', [ReservationController::class, 'getAvailableVehiclesOnDates']);
 
+Route::post('/addservice', [ReservationServiceController::class, 'addServiceToReservation']);
+Route::post('/getservices', [ReservationServiceController::class, 'getServices']);

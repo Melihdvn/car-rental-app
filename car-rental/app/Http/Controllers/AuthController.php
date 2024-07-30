@@ -42,6 +42,7 @@ class AuthController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
+                'name' => 'required',
                 'email' => 'required|email',
                 'code' => 'required',
                 'password' => 'required',
@@ -58,7 +59,7 @@ class AuthController extends Controller
             $codeEntry = VerificationCode::codeEntry($request->email, $request->code, 'register');
 
             if ($codeEntry) {
-                User::createUser($request->email, $request->password);
+                User::createUser($request->name, $request->email, $request->password);
 
                 return response()->json([
                     'success' => true,
@@ -94,10 +95,11 @@ class AuthController extends Controller
         $user = User::checkUser($request->email);
 
         if (!$user || !Hash::check($request->password, $user->password)) {
-            return response()->json(['message' => 'Invalid email address or password.'], 401);
+            return response()->json(['errors' => 'Invalid email address or password.'], 401);
         }
 
         return response()->json([
+            'success' => true,
             'message' => 'Login successful.',
             'user' => $user
         ], 200);

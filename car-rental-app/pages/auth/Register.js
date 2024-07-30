@@ -95,6 +95,7 @@ export default function Register({ navigation }) {
         const response = await post(
           "/register",
           {
+            name: name,
             email: mail,
             password: password,
             password_confirmation: confirmPassword,
@@ -129,6 +130,7 @@ export default function Register({ navigation }) {
     const response = await post(
       "/verify-code",
       {
+        name: name,
         email: mail,
         code: otp,
         password: password,

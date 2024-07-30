@@ -21,8 +21,9 @@ class User extends Model
         'password',
     ];
 
-    public static function createUser($email, $password){
+    public static function createUser($name, $email, $password){
         DB::table('users')->insert([
+            'name' => $name,
             'email' => $email,
             'password' => bcrypt($password),
             'created_at' => now(),

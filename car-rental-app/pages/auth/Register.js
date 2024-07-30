@@ -16,6 +16,7 @@ import {
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Ionicons } from "@expo/vector-icons";
+import { post, get } from "../../lib/api";
 
 const RegisterInput = ({ icon, children }) => {
   return (
@@ -93,25 +94,43 @@ export default function Register({ navigation }) {
       try {
         // Call the registration API here and get the OTP
         // Assume the API returns a success response and an OTP
-        const response = await api.register({ name, mail, password }); // Replace with your actual API call
+        const response = await post(
+          "/register",
+          {
+            email: mail,
+            password: password,
+            password_confirmation: confirmPassword,
+          },
+          { headers: { "Content-Type": "application/json" } }
+        );
         if (response.success) {
           Alert.alert("Registration successful!");
           setOtpVisible(true); // Show OTP input field
+          setShowRegister(false);
         } else {
+          console.log(response);
           setError(response.error || "Registration failed. Please try again.");
         }
       } catch (error) {
+        console.log(error);
         setError("An error occurred. Please try again.");
       }
     }
   };
 
-  const handleVerifyOTP = () => {
-    // Handle OTP verification logic here
+  const handleVerifyOTP = async () => {
+    const response = await post(
+      "/verify-code",
+      {
+        email: mail,
+        code: otp,
+        password: password,
+      },
+      { headers: { "Content-Type": "application/json" } }
+    );
     if (otp.length === 6) {
-      // Assume OTP verification success
-      Alert.alert("OTP verified successfully!");
-      // Optionally navigate to the home screen or update state
+      if (response.success) Alert.alert("OTP verified successfully!");
+      navigation.goBack();
     } else {
       Alert.alert("Invalid OTP. Please try again.");
     }
@@ -327,7 +346,6 @@ export default function Register({ navigation }) {
                     }}
                     value={otp}
                     onChangeText={setOtp}
-                    keyboardType="numeric"
                     maxLength={6} // Assuming OTP is 6 digits
                   />
                 </RegisterInput>

@@ -1,12 +1,17 @@
 import * as React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import Home from "./pages/application/Home";
+import Profile from "./pages/application/Profile";
+
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 const Stack = createStackNavigator();
+const Tab = createBottomTabNavigator();
 
 export default function App() {
   return (
@@ -24,10 +29,54 @@ export default function App() {
         />
         <Stack.Screen
           options={{ headerShown: false }}
-          name="Home"
-          component={Home}
+          name="HomeTabs"
+          component={HomeTabs}
         />
       </Stack.Navigator>
     </NavigationContainer>
+  );
+}
+
+function HomeTabs({ route }) {
+  const { userId } = route.params || {};
+
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
+
+          if (route.name === "Home") {
+            iconName = "home";
+          } else if (route.name === "Profile") {
+            iconName = focused ? "person" : "person-outline";
+          }
+
+          return <MaterialIcons name={iconName} size={size} color={color} />;
+        },
+        tabBarStyle: {
+          backgroundColor: "#222222",
+          paddingTop: 10,
+          height: 75,
+        },
+        tabBarActiveBackgroundColor: "#222222",
+        tabBarInactiveBackgroundColor: "#222222",
+        tabBarActiveTintColor: "#cd4100",
+        tabBarInactiveTintColor: "gray",
+      })}
+    >
+      <Tab.Screen
+        options={{ headerShown: false }}
+        name="Home"
+        component={Home}
+        initialParams={{ userId }} // Passing userId to Home
+      />
+      <Tab.Screen
+        options={{ headerShown: false }}
+        name="Profile"
+        component={Profile}
+        initialParams={{ userId }} // Passing userId to Profile
+      />
+    </Tab.Navigator>
   );
 }

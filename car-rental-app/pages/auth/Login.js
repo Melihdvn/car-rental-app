@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
+import { post, get } from "../../lib/api";
 import {
   StyleSheet,
   Text,
@@ -57,63 +58,60 @@ export default function Login({ navigation }) {
   const [error, setError] = useState("");
   const [cooldownCount, setCooldownCount] = useState(0);
   const [loginTryCounter, setLoginTryCounter] = useState(0);
-  const [loginCorrect, setLoginCorrect] = useState(0);
-  const [loginCorrectTimer, setLoginCorrectTimer] = useState(3);
-  const [intervalId, setIntervalId] = useState(null);
   const [showLogin, setShowLogin] = useState(false);
   const imageAnim = useState(new Animated.Value(1))[0];
 
   const checkValid = () => {
-    const correctMail = "melih";
-    const correctPassword = "a";
-
-    if (mail === correctMail && password === correctPassword) {
-      setError("Login successful");
-      return true;
-    } else {
-      if (mail === "") {
-        setError("Please enter your e-mail address.");
-        return false;
-      }
-      if (password === "") {
-        setError("Please enter your password.");
-        return false;
-      } else {
-        if (mail === correctMail) {
-          setError("Wrong password.");
-          return false;
-        } else setError("No such user found.");
-        return false;
-      }
+    if (mail === "") {
+      setError("Please enter your e-mail address.");
+      return false;
     }
+    if (password === "") {
+      setError("Please enter your password.");
+      return false;
+    }
+
+    return true;
   };
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
+    setError("");
+
     const valid = checkValid();
     if (valid) {
-      setError("");
-      setLoginTryCounter(0);
-      setLoginCorrect(1);
+      try {
+        const response = await post(
+          "/login",
+          {
+            email: mail,
+            password: password,
+          },
+          { headers: { "Content-Type": "application/json" } }
+        );
 
-      const id = setInterval(() => {
-        setLoginCorrectTimer((prevTimer) => prevTimer - 1);
-      }, 1000);
-      setIntervalId(id);
-    } else {
+        if (response.success) {
+          const userId = response.user.user_id;
+          console.log(userId);
+          navigation.replace("HomeTabs", { userId: userId });
+        } else {
+          if (response) {
+            if (response.status === 401) {
+              setError("Invalid email address or password.");
+            }
+          }
+        }
+      } catch (error) {
+        console.error("An unexpected error occurred:", error);
+        setError("An error occurred. Please try again.");
+      }
+
       setLoginTryCounter(loginTryCounter + 1);
       if (loginTryCounter >= 2) {
-        setCooldownCount(30);
+        setCooldownCount(15);
         setLoginTryCounter(0);
       }
     }
   };
-
-  useEffect(() => {
-    if (loginCorrectTimer === 0) {
-      clearInterval(intervalId);
-      navigation.replace("HomeTabs");
-    }
-  }, [loginCorrectTimer]);
 
   useEffect(() => {
     var timer;
@@ -130,7 +128,7 @@ export default function Login({ navigation }) {
   };
 
   const guestLogin = () => {
-    setLoginCorrect(1);
+    navigation.replace("HomeTabs");
   };
 
   const switchSeePassword = () => {
@@ -145,6 +143,10 @@ export default function Login({ navigation }) {
       easing: Easing.inOut(Easing.ease),
       useNativeDriver: false,
     }).start();
+  };
+
+  const clearErrors = () => {
+    if (error) setError("");
   };
 
   return (
@@ -193,6 +195,7 @@ export default function Login({ navigation }) {
                 icon={<Ionicons name="mail" size={20} color="gray" />}
               >
                 <TextInput
+                  onFocus={clearErrors}
                   placeholder="E-Mail Address"
                   placeholderTextColor={"gray"}
                   style={{
@@ -211,6 +214,7 @@ export default function Login({ navigation }) {
                 icon={<Ionicons name="lock-closed" size={17} color="gray" />}
               >
                 <TextInput
+                  onFocus={clearErrors}
                   placeholder="Password"
                   placeholderTextColor={"gray"}
                   style={{
@@ -265,29 +269,9 @@ export default function Login({ navigation }) {
                     marginTop: 5,
                   }}
                 >
-                  {"Too many wrong attempts! Please wait: " +
+                  {"Too many attempts! Please wait " +
                     cooldownCount +
                     " seconds"}
-                </Text>
-              ) : null}
-
-              {loginCorrect ? (
-                <Text
-                  style={{
-                    fontSize: 17,
-                    color: "green",
-                    backgroundColor: "#222222",
-                    borderWidth: 1,
-                    borderColor: "green",
-                    borderRadius: 5,
-                    paddingHorizontal: 10,
-                    paddingVertical: 3,
-                    marginTop: 5,
-                  }}
-                >
-                  {"Login successful! You will be redirected in " +
-                    loginCorrectTimer +
-                    " seconds."}
                 </Text>
               ) : null}
 

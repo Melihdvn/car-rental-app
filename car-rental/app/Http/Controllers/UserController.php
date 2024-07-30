@@ -9,34 +9,32 @@ use App\Models\User;
 
 class UserController extends Controller
 {
-    public function changeMail(Request $request)
+    public function getUser($id)
     {
-        $validator = Validator::make($request->all(), [
-            'user_id' => 'required',
-            'email' => 'required|email|unique:users,email|unique:verification_codes,email',
-        ]);
+        \Log::info('User ID: ' . $id);
+        $user = User::getUser($id);
 
-        if ($validator->fails()) {
+        if ($user) {
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'name' => $user->name,
+                    'email' => $user->email,
+                ],
+            ]);
+        } else {
             return response()->json([
                 'success' => false,
-                'message' => 'Invalid information',
-                'errors' => $validator->errors()
-            ], 200);
+                'message' => 'User not found.',
+            ], 404);
         }
-
-        User::updateMail($request->user_id, $request->email);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'E-mail successfully changed.',
-        ], 200);
     }
 
     public function changeName(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'user_id' => 'required',
-            'name' => 'required',
+            'user_id' => 'required|exists:users,user_id',
+            'name' => 'required|string|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -52,6 +50,29 @@ class UserController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Name successfully changed.',
+        ], 200);
+    }
+
+    public function changeMail(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required|exists:users,user_id',
+            'email' => 'required|email|unique:users,email',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid information',
+                'errors' => $validator->errors()
+            ], 200);
+        }
+
+        User::updateMail($request->user_id, $request->email);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'E-mail successfully changed.',
         ], 200);
     }
 

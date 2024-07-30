@@ -16,7 +16,9 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/forgotpassword', [AuthController::class, 'forgotPassword']);
 Route::post('/changepassword', [AuthController::class, 'changePassword']);
 
-Route::post('/changename', [UserController::class, 'changeName']);
+Route::get('/user/{id}', [UserController::class, 'getUser']);
+Route::post('/user/update/name', [UserController::class, 'changeName']);
+Route::post('/user/update/email', [UserController::class, 'changeMail']);
 
 Route::post('/createreservation', [ReservationController::class, 'createReservation']);
 Route::post('/getreservations', [ReservationController::class, 'getReservations']);

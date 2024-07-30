@@ -21,6 +21,10 @@ class User extends Model
         'password',
     ];
 
+    public static function getUser($userId) {
+        return DB::table('users')->where('user_id', $userId)->first();
+    }
+
     public static function createUser($name, $email, $password){
         DB::table('users')->insert([
             'name' => $name,

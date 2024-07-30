@@ -92,8 +92,6 @@ export default function Register({ navigation }) {
     if (valid) {
       setError("");
       try {
-        // Call the registration API here and get the OTP
-        // Assume the API returns a success response and an OTP
         const response = await post(
           "/register",
           {
@@ -103,16 +101,25 @@ export default function Register({ navigation }) {
           },
           { headers: { "Content-Type": "application/json" } }
         );
+
         if (response.success) {
-          Alert.alert("Registration successful!");
           setOtpVisible(true); // Show OTP input field
           setShowRegister(false);
         } else {
-          console.log(response);
-          setError(response.error || "Registration failed. Please try again.");
+          // Extract specific error messages
+          if (response.errors) {
+            const errorMessages = Object.values(response.errors)
+              .flat()
+              .join(", ");
+            setError(errorMessages || "Registration failed. Please try again.");
+          } else {
+            setError(
+              response.message || "Registration failed. Please try again."
+            );
+          }
         }
       } catch (error) {
-        console.log(error);
+        console.log(error.message); // Log the error message
         setError("An error occurred. Please try again.");
       }
     }
@@ -129,10 +136,11 @@ export default function Register({ navigation }) {
       { headers: { "Content-Type": "application/json" } }
     );
     if (otp.length === 6) {
-      if (response.success) Alert.alert("OTP verified successfully!");
+      if (response.success) Alert.alert("Register completed successfully!");
+      setError("");
       navigation.goBack();
     } else {
-      Alert.alert("Invalid OTP. Please try again.");
+      setError("Invalid OTP. Please try again.");
     }
   };
 
@@ -349,6 +357,23 @@ export default function Register({ navigation }) {
                     maxLength={6} // Assuming OTP is 6 digits
                   />
                 </RegisterInput>
+                {error ? (
+                  <Text
+                    style={{
+                      fontSize: 17,
+                      color: "#cd4100",
+                      backgroundColor: "#222222",
+                      borderWidth: 1,
+                      borderColor: "#cd4100",
+                      borderRadius: 5,
+                      paddingHorizontal: 10,
+                      paddingVertical: 3,
+                      marginVertical: 5,
+                    }}
+                  >
+                    {error}
+                  </Text>
+                ) : null}
                 <TouchableOpacity
                   onPress={handleVerifyOTP}
                   style={{

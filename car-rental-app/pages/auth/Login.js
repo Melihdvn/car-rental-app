@@ -28,6 +28,8 @@ const LoginInput = ({ icon, children }) => {
         marginBottom: 16,
         height: 54,
         backgroundColor: "#242424",
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
       }}
     >
       {icon && (
@@ -213,7 +215,7 @@ export default function Login({ navigation }) {
                   placeholderTextColor={"gray"}
                   style={{
                     height: 50,
-                    width: "75%",
+                    width: "80%",
                     justifyContent: "center",
                     color: "white",
                     paddingLeft: 10,
@@ -227,6 +229,7 @@ export default function Login({ navigation }) {
                     name={seePassword ? "eye-off" : "eye"}
                     size={20}
                     color="#cd4100"
+                    style={{ position: "absolute", right: 15, bottom: -10 }}
                   />
                 </TouchableOpacity>
               </LoginInput>

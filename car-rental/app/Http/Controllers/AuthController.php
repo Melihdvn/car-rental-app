@@ -14,6 +14,7 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
+            'name' => 'required',
             'email' => 'required|email|unique:users,email|unique:verification_codes,email',
             'password' => 'required|min:6|confirmed',
         ]);
@@ -26,7 +27,7 @@ class AuthController extends Controller
             ], 200);
         }
 
-        $verificationCode = Str::random(6);
+        $verificationCode = rand(100000,999999);
 
         $isCreated = VerificationCode::createCode($request->email, $verificationCode, 'register');
         if ($isCreated) {

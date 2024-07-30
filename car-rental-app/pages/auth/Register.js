@@ -354,6 +354,7 @@ export default function Register({ navigation }) {
                     }}
                     value={otp}
                     onChangeText={setOtp}
+                    keyboardType="numeric"
                     maxLength={6} // Assuming OTP is 6 digits
                   />
                 </RegisterInput>

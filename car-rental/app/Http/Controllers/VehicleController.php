@@ -17,7 +17,7 @@ class VehicleController extends Controller
         else
         {
             return response()->json([
-                'message' => 'There is no cars currently.',
+                'message' => 'There are no cars available at the moment.',
             ], 200);
         }
     }

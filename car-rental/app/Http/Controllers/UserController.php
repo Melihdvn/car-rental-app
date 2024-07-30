@@ -9,7 +9,8 @@ use App\Models\User;
 
 class UserController extends Controller
 {
-    public function changeMail(Request $request){
+    public function changeMail(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'user_id' => 'required',
             'email' => 'required|email|unique:users,email|unique:verification_codes,email',
@@ -18,7 +19,7 @@ class UserController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Geçersiz bilgiler',
+                'message' => 'Invalid information',
                 'errors' => $validator->errors()
             ], 200);
         }
@@ -27,11 +28,12 @@ class UserController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'E-Mail başarıyla değiştirildi.',
+            'message' => 'E-mail successfully changed.',
         ], 200);
-}
+    }
 
-    public function changeName(Request $request){
+    public function changeName(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'user_id' => 'required',
             'name' => 'required',
@@ -40,7 +42,7 @@ class UserController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Geçersiz bilgiler',
+                'message' => 'Invalid information',
                 'errors' => $validator->errors()
             ], 200);
         }
@@ -49,11 +51,12 @@ class UserController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'İsim başarıyla değiştirildi.',
+            'message' => 'Name successfully changed.',
         ], 200);
-}
+    }
 
-    public function changePassword(Request $request){
+    public function changePassword(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'user_id' => 'required',
             'password' => 'min:6|confirmed',
@@ -62,7 +65,7 @@ class UserController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Geçersiz bilgiler',
+                'message' => 'Invalid information',
                 'errors' => $validator->errors()
             ], 200);
         }
@@ -71,7 +74,7 @@ class UserController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Şifre başarıyla değiştirildi.',
+            'message' => 'Password successfully changed.',
         ], 200);
-}
+    }
 }

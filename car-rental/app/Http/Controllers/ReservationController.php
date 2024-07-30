@@ -7,29 +7,32 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\Reservation;
 use App\Models\Vehicle;
 
-
 class ReservationController extends Controller
 {
-    public function getReservations(Request $request){
+    public function getReservations(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'user_id' => 'required|exists:users,user_id',
         ]);
+
         if ($validator->fails()) {
-            return response()->json(['success' => false,$validator->errors()], 200);
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ], 200);
         }
 
         $reservations = Reservation::getUserReservations($request->user_id);
 
-        if($reservations)
-        {
+        if ($reservations) {
             return response()->json($reservations, 200);
-        }
-        else {
+        } else {
             return response()->json([
-                'message' => 'User does\'nt have reservations.',
+                'message' => 'User doesn\'t have reservations.',
             ], 200);
         }
     }
+
     public function createReservation(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -41,7 +44,10 @@ class ReservationController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['success' => false,$validator->errors()], 200);
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ], 200);
         }
 
         $result = Reservation::createReservation($request->user_id, $request->vehicle_id, $request->start_date, $request->end_date, $request->total_price);
@@ -59,29 +65,33 @@ class ReservationController extends Controller
         ], 500);
     }
 
-    public function getAvailableVehiclesOnDates(Request $request){
+    public function getAvailableVehiclesOnDates(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'start_date' => 'required|date',
             'end_date' => 'required|date|after:start_date',
         ]);
+
         if ($validator->fails()) {
-            return response()->json(['success' => false,$validator->errors()], 200);
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ], 200);
         }
 
         $vehicles = Reservation::getAvailableVehiclesOnDates($request->start_date, $request->end_date);
 
-        if($vehicles)
-        {
+        if ($vehicles) {
             return response()->json($vehicles, 200);
-        }
-        else {
+        } else {
             return response()->json([
-                'message' => 'There is no vehicles available at that dates.',
+                'message' => 'There are no vehicles available on these dates.',
             ], 200);
         }
     }
 
-    public function rentCar(Request $request){
+    public function rentCar(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'reservation_id' => 'required|exists:reservations,reservation_id',
             'credit_card_number' => 'required|min:16'
@@ -90,24 +100,23 @@ class ReservationController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Geçersiz bilgiler',
+                'message' => 'Invalid information',
                 'errors' => $validator->errors()
             ], 200);
         }
 
         $isSuccess = Reservation::rentCar($request->reservation_id);
 
-        if($isSuccess){
-        return response()->json([
-            'success' => true,
-            'message' => 'Araç başarıyla kiralandı.',
-        ], 200);
+        if ($isSuccess) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Car rented successfully.',
+            ], 200);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Car is already rented.',
+            ], 200);
+        }
     }
-    else {
-        return response()->json([
-            'success' => false,
-            'message' => 'Araç zaten kiralanmış.',
-        ], 200);
-    }
-}
 }

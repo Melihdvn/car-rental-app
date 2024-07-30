@@ -21,7 +21,7 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Geçersiz bilgiler',
+                'message' => 'Invalid information',
                 'errors' => $validator->errors()
             ], 200);
         }
@@ -29,12 +29,12 @@ class AuthController extends Controller
         $verificationCode = Str::random(6);
 
         $isCreated = VerificationCode::createCode($request->email, $verificationCode, 'register');
-        if (($isCreated)){
-        return response()->json([
-            'success' => true,
-            'message' => 'Doğrulama kodu oluşturuldu. Kodunuzu kontrol edin.',
-        ], 200);
-    }
+        if ($isCreated) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Verification code created. Please check your code.',
+            ], 200);
+        }
     }
 
     public function verifyCode(Request $request)
@@ -49,7 +49,7 @@ class AuthController extends Controller
             if ($validator->fails()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Geçersiz bilgiler',
+                    'message' => 'Invalid information',
                     'errors' => $validator->errors()
                 ], 200);
             }
@@ -61,12 +61,12 @@ class AuthController extends Controller
 
                 return response()->json([
                     'success' => true,
-                    'message' => 'Kullanıcı başarıyla oluşturuldu.',
+                    'message' => 'User successfully created.',
                 ], 200);
             } else {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Doğrulama kodu hatalı.',
+                    'message' => 'Invalid verification code.',
                 ], 400);
             }
 
@@ -74,7 +74,7 @@ class AuthController extends Controller
             \Log::error('Verification error: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Bir hata oluştu.',
+                'message' => 'An error occurred.',
             ], 500);
         }
     }
@@ -93,11 +93,11 @@ class AuthController extends Controller
         $user = User::checkUser($request->email);
 
         if (!$user || !Hash::check($request->password, $user->password)) {
-            return response()->json(['message' => 'Geçersiz e-posta adresi veya şifre.'], 401);
+            return response()->json(['message' => 'Invalid email address or password.'], 401);
         }
 
         return response()->json([
-            'message' => 'Giriş başarılı.',
+            'message' => 'Login successful.',
             'user' => $user
         ], 200);
     }
@@ -115,12 +115,12 @@ class AuthController extends Controller
         $verificationCode = Str::random(6);
 
         $isCreated = VerificationCode::createCode($request->email, $verificationCode, 'password');
-        if (($isCreated)){
-        return response()->json([
-            'success' => true,
-            'message' => 'Doğrulama kodu oluşturuldu. Kodunuzu kontrol edin.',
-        ], 200);
-    }
+        if ($isCreated) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Verification code created. Please check your code.',
+            ], 200);
+        }
     }
 
     public function changePassword(Request $request)
@@ -142,14 +142,13 @@ class AuthController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Şifre değiştirildi.',
+                'message' => 'Password changed.',
             ], 200);
         } else {
             return response()->json([
                 'success' => false,
-                'message' => 'Doğrulama kodu hatalı.',
+                'message' => 'Invalid verification code.',
             ], 400);
         }
     }
-
 }

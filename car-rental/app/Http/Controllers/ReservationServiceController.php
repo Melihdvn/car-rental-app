@@ -18,7 +18,7 @@ class ReservationServiceController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Geçersiz bilgiler',
+                'message' => 'Invalid information',
                 'errors' => $validator->errors()
             ], 200);
         }
@@ -28,35 +28,37 @@ class ReservationServiceController extends Controller
         if ($result) {
             return response()->json([
                 'success' => true,
-                'message' => 'Hizmet başarıyla rezerve edildi.',
+                'message' => 'Service successfully added to reservation.',
             ], 200);
         } else {
             return response()->json([
                 'success' => false,
-                'message' => 'Hizmet zaten rezerve edilmiş.',
+                'message' => 'Service is already reserved.',
             ], 200);
         }
     }
 
-    public function getServices(Request $request){
+    public function getServices(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'reservation_id' => 'required|exists:reservations,reservation_id',
         ]);
+
         if ($validator->fails()) {
-            return response()->json(['success' => false,$validator->errors()], 200);
-        }
-
-        $reservations = ReservationService::getReservationServices($request->reservation_id);
-
-        if($reservations)
-        {
-            return response()->json($reservations, 200);
-        }
-        else {
             return response()->json([
-                'message' => 'Reservation does\'nt have any additional services.',
+                'success' => false,
+                'errors' => $validator->errors()
+            ], 200);
+        }
+
+        $services = ReservationService::getReservationServices($request->reservation_id);
+
+        if ($services) {
+            return response()->json($services, 200);
+        } else {
+            return response()->json([
+                'message' => 'Reservation doesn\'t have any additional services.',
             ], 200);
         }
     }
-
 }

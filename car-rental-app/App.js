@@ -7,6 +7,7 @@ import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import Home from "./pages/application/Home";
 import Profile from "./pages/application/Profile";
+import VehicleList from "./pages/application/VehicleList";
 
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
@@ -50,6 +51,8 @@ function HomeTabs({ route }) {
             iconName = "home";
           } else if (route.name === "Profile") {
             iconName = focused ? "person" : "person-outline";
+          } else if (route.name === "Vehicle List") {
+            iconName = "list-alt";
           }
 
           return <MaterialIcons name={iconName} size={size} color={color} />;
@@ -70,6 +73,12 @@ function HomeTabs({ route }) {
         name="Home"
         component={Home}
         initialParams={{ userId }} // Passing userId to Home
+      />
+      <Tab.Screen
+        options={{ headerShown: false }}
+        name="Vehicle List"
+        component={VehicleList}
+        initialParams={{ userId }} // Passing userId to Cars
       />
       <Tab.Screen
         options={{ headerShown: false }}

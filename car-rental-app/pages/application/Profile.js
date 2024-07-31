@@ -11,7 +11,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/native";
 import { get, post } from "../../lib/api";
 
-const Profile = () => {
+const Profile = ({ navigation }) => {
   const route = useRoute();
   const userId = route.params?.userId;
 
@@ -25,7 +25,7 @@ const Profile = () => {
 
   useEffect(() => {
     if (!userId) {
-      setError("User ID is missing.");
+      setError("You must register to use this page.");
       return;
     }
 
@@ -44,6 +44,10 @@ const Profile = () => {
 
     fetchUserInfo();
   }, [userId]);
+
+  const handleRegister = () => {
+    navigation.replace("Register");
+  };
 
   const handleEdit = async () => {
     if (editField && newValue) {
@@ -89,73 +93,91 @@ const Profile = () => {
       style={styles.background}
     >
       <View style={styles.panel}>
-        <View style={styles.infoContainer}>
-          <View style={styles.infoRow}>
-            <Text style={styles.label}>Name:</Text>
-            {editField === "name" ? (
-              <TextInput
-                style={styles.input}
-                value={newValue}
-                onChangeText={setNewValue}
-                onSubmitEditing={handleEdit}
-                keyboardType="default"
-                autoCapitalize="words"
-                autoCorrect={false}
-              />
-            ) : (
-              <Text style={styles.value}>{userInfo.name}</Text>
-            )}
-            <TouchableOpacity
-              onPress={() => {
-                if (editField === "name") {
-                  handleEdit();
-                } else {
-                  setEditField("name");
-                  setNewValue(userInfo.name);
-                }
-              }}
-            >
-              <Ionicons
-                name={editField === "name" ? "checkmark" : "pencil"}
-                size={20}
-                color="#cd4100"
-              />
-            </TouchableOpacity>
+        {userId ? (
+          <View style={styles.infoContainer}>
+            <View style={styles.infoRow}>
+              <Text style={styles.label}>Name:</Text>
+              {editField === "name" ? (
+                <TextInput
+                  style={styles.input}
+                  value={newValue}
+                  onChangeText={setNewValue}
+                  onSubmitEditing={handleEdit}
+                  keyboardType="default"
+                  autoCapitalize="words"
+                  autoCorrect={false}
+                />
+              ) : (
+                <Text style={styles.value}>{userInfo.name}</Text>
+              )}
+              <TouchableOpacity
+                onPress={() => {
+                  if (editField === "name") {
+                    handleEdit();
+                  } else {
+                    setEditField("name");
+                    setNewValue(userInfo.name);
+                  }
+                }}
+              >
+                <Ionicons
+                  name={editField === "name" ? "checkmark" : "pencil"}
+                  size={20}
+                  color="#cd4100"
+                />
+              </TouchableOpacity>
+            </View>
+            <View style={styles.infoRow}>
+              <Text style={styles.label}>Email:</Text>
+              {editField === "email" ? (
+                <TextInput
+                  style={styles.input}
+                  value={newValue}
+                  onChangeText={setNewValue}
+                  onSubmitEditing={handleEdit}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                />
+              ) : (
+                <Text style={styles.value}>{userInfo.email}</Text>
+              )}
+              <TouchableOpacity
+                onPress={() => {
+                  if (editField === "email") {
+                    handleEdit();
+                  } else {
+                    setEditField("email");
+                    setNewValue(userInfo.email);
+                  }
+                }}
+              >
+                <Ionicons
+                  name={editField === "email" ? "checkmark" : "pencil"}
+                  size={20}
+                  color="#cd4100"
+                />
+              </TouchableOpacity>
+            </View>
           </View>
-          <View style={styles.infoRow}>
-            <Text style={styles.label}>Email:</Text>
-            {editField === "email" ? (
-              <TextInput
-                style={styles.input}
-                value={newValue}
-                onChangeText={setNewValue}
-                onSubmitEditing={handleEdit}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoCorrect={false}
-              />
-            ) : (
-              <Text style={styles.value}>{userInfo.email}</Text>
-            )}
-            <TouchableOpacity
-              onPress={() => {
-                if (editField === "email") {
-                  handleEdit();
-                } else {
-                  setEditField("email");
-                  setNewValue(userInfo.email);
-                }
-              }}
-            >
-              <Ionicons
-                name={editField === "email" ? "checkmark" : "pencil"}
-                size={20}
-                color="#cd4100"
-              />
-            </TouchableOpacity>
-          </View>
-          {error ? <Text style={styles.error}>{error}</Text> : null}
-        </View>
+        ) : (
+          <TouchableOpacity
+            onPress={handleRegister}
+            style={{
+              height: 45,
+              width: "80%",
+              backgroundColor: "#cd4100",
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: 5,
+              marginTop: 10,
+              paddingHorizontal: 100,
+            }}
+          >
+            <Text style={{ color: "white" }}>Register</Text>
+          </TouchableOpacity>
+        )}
+        {error ? <Text style={styles.error}>{error}</Text> : null}
       </View>
     </ImageBackground>
   );

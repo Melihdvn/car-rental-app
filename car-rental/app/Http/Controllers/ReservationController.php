@@ -82,7 +82,7 @@ class ReservationController extends Controller
         $vehicles = Reservation::getAvailableVehiclesOnDates($request->start_date, $request->end_date);
 
         if ($vehicles) {
-            return response()->json($vehicles, 200);
+            return response()->json(['success' => true,'vehicles' => $vehicles], 200);
         } else {
             return response()->json([
                 'message' => 'There are no vehicles available on these dates.',

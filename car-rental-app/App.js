@@ -8,6 +8,7 @@ import Register from "./pages/auth/Register";
 import Home from "./pages/application/Home";
 import Profile from "./pages/application/Profile";
 import VehicleList from "./pages/application/VehicleList";
+import RentVehicle from "./pages/application/RentVehicle";
 
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
@@ -53,6 +54,8 @@ function HomeTabs({ route }) {
             iconName = focused ? "person" : "person-outline";
           } else if (route.name === "Vehicle List") {
             iconName = "list-alt";
+          } else if (route.name === "Rent Vehicle") {
+            iconName = "car-rental";
           }
 
           return <MaterialIcons name={iconName} size={size} color={color} />;
@@ -73,6 +76,12 @@ function HomeTabs({ route }) {
         name="Home"
         component={Home}
         initialParams={{ userId }} // Passing userId to Home
+      />
+      <Tab.Screen
+        options={{ headerShown: false }}
+        name="Rent Vehicle"
+        component={RentVehicle}
+        initialParams={{ userId }} // Passing userId to Rent
       />
       <Tab.Screen
         options={{ headerShown: false }}

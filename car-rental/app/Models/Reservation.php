@@ -61,18 +61,24 @@ class Reservation extends Model
             ->exists();
     }
 
-    public static function getAvailableVehiclesOnDates($start_date, $end_date){
+    public static function getAvailableVehiclesOnDates($start_date, $end_date)
+    {
         $reservedVehicles = DB::table('reservations')
-            ->whereBetween('start_date', [$start_date, $end_date])
-            ->orWhereBetween('end_date', [$start_date, $end_date])
-            ->orwhere('reservations.start_date', '>', $end_date)
-            ->orWhere('reservations.end_date', '<', $start_date)
+            ->where(function ($query) use ($start_date, $end_date) {
+                $query->whereBetween('start_date', [$start_date, $end_date])
+                    ->orWhereBetween('end_date', [$start_date, $end_date])
+                    ->orWhere(function ($query) use ($start_date, $end_date) {
+                        $query->where('start_date', '<', $start_date)
+                              ->where('end_date', '>', $end_date);
+                    });
+            })
             ->select('vehicle_id')
             ->pluck('vehicle_id')
             ->toArray();
 
-            $availableVehicles = DB::table('vehicles')
+        $availableVehicles = DB::table('vehicles')
             ->whereNotIn('vehicle_id', $reservedVehicles)
+            ->where('is_active', 1) // Optional: to ensure the vehicle is active
             ->select('*')
             ->get();
 

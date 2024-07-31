@@ -12,11 +12,12 @@ class VehicleController extends Controller
 
         if($vehicles)
         {
-            return response()->json($vehicles, 200);
+            return response()->json(['success' => true,$vehicles], 200);
         }
         else
         {
             return response()->json([
+                'success' => false,
                 'message' => 'There are no cars available at the moment.',
             ], 200);
         }

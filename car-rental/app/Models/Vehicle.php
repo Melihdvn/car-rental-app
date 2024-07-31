@@ -8,12 +8,34 @@ use Illuminate\Support\Facades\DB;
 
 class Vehicle extends Model
 {
+
+    protected $table = 'vehicles';
+
+    protected $primaryKey = 'vehicle_id';
+
+    public $timestamps = true;
+
     protected $fillable = [
-        'user_id',
-        'vehicle_id',
-        'start_date',
-        'end_date',
-        'total_price',
+        'make',
+        'model',
+        'fuel',
+        'transmission',
+        'year',
+        'kilometers',
+        'is_active',
+        'daily_rate',
+    ];
+
+    protected $casts = [
+        'is_active' => 'boolean',
+        'daily_rate' => 'decimal:2',
+        'created_at' => 'datetime:Y-m-d H:i:s',
+        'updated_at' => 'datetime:Y-m-d H:i:s',
+    ];
+
+    protected $dates = [
+        'created_at',
+        'updated_at',
     ];
 
     public static function getVehicles()

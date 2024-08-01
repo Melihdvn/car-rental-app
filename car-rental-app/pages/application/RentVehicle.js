@@ -214,8 +214,10 @@ const RentVehicle = ({ navigation }) => {
                     <DateTimePicker
                       value={startDate}
                       mode="date"
-                      textColor="white"
                       display="default"
+                      accentColor="#cd4100"
+                      themeVariant="dark"
+                      minimumDate={new Date()}
                       onChange={(event, date) => handleDateChange(event, date)}
                     />
                   )}
@@ -232,8 +234,10 @@ const RentVehicle = ({ navigation }) => {
                     <DateTimePicker
                       value={endDate}
                       mode="date"
-                      textColor="white"
                       display="default"
+                      accentColor="#cd4100"
+                      themeVariant="dark"
+                      minimumDate={new Date()}
                       onChange={(event, date) => handleDateChange(event, date)}
                     />
                   )}
@@ -361,19 +365,25 @@ const styles = StyleSheet.create({
   dateContainer: {
     width: "100%",
     marginBottom: 20,
+    alignItems: "center",
   },
   dateText: {
     color: "#fff",
-    marginBottom: 5,
+    marginVertical: 5,
+    fontSize: 18,
+    fontWeight: "350",
   },
   dateButton: {
-    backgroundColor: "#cd4100",
+    backgroundColor: "#444",
     padding: 10,
     borderRadius: 10,
+    marginVertical: 5,
+    width: "80%",
   },
   dateButtonText: {
     color: "#fff",
     fontSize: 16,
+    fontWeight: "300",
   },
   searchButton: {
     backgroundColor: "#cd4100",

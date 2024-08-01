@@ -25,7 +25,7 @@ class ReservationController extends Controller
         $reservations = Reservation::getUserReservations($request->user_id);
 
         if ($reservations) {
-            return response()->json($reservations, 200);
+            return response()->json(['success' => true,'reservations' => $reservations], 200);
         } else {
             return response()->json([
                 'message' => 'User doesn\'t have reservations.',

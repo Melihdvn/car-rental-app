@@ -53,8 +53,14 @@ const VehicleList = () => {
   const renderItem = ({ item }) => (
     <View style={styles.vehicleCard}>
       <Image source={getImage(item.image)} style={styles.vehicleImage} />
-      <View style={styles.vehicleInfo}>
-        <Text style={styles.makeModel}>{`${item.make} ${item.model}`}</Text>
+      <View style={styles.vehicleInfoContainer}>
+        <View style={styles.vehicleInfo}>
+          <Text style={styles.makeModel}>{`${item.make} ${item.model}`}</Text>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Icon name="dollar-sign" size={20} width={11} color="#cd4100" />
+            <Text style={styles.priceText}>{item.daily_rate} / day</Text>
+          </View>
+        </View>
         <View style={styles.detailsContainer}>
           <View style={styles.detail}>
             <Icon name="gas-pump" size={20} width={20} color="#cd4100" />
@@ -72,10 +78,10 @@ const VehicleList = () => {
             <Icon name="tachometer-alt" size={20} width={24} color="#cd4100" />
             <Text style={styles.detailText}>{item.kilometers} km</Text>
           </View>
-          <View style={styles.detail}>
+          {/*           <View style={styles.detail}>
             <Icon name="dollar-sign" size={20} width={11} color="#cd4100" />
             <Text style={styles.detailText}>{item.daily_rate} / day</Text>
-          </View>
+          </View> */}
         </View>
       </View>
     </View>
@@ -87,7 +93,7 @@ const VehicleList = () => {
       style={styles.background}
     >
       <View style={styles.panel}>
-        {vehicles.length > 0 ? (
+        {vehicles && vehicles.length > 0 ? (
           <FlatList
             showsVerticalScrollIndicator={false}
             data={vehicles}
@@ -121,13 +127,13 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.05)",
     borderRadius: 20,
     padding: 15,
-    marginBottom: 15,
+    marginBottom: 25,
     width: "100%",
     alignItems: "center",
   },
   vehicleImage: {
     height: 150,
-    width: "100%",
+    width: "88%",
     resizeMode: "contain",
     borderRadius: 10,
   },
@@ -137,16 +143,26 @@ const styles = StyleSheet.create({
     color: "#fff",
     marginVertical: 10,
   },
+  vehicleInfoContainer: {
+    backgroundColor: "#fff1",
+    borderRadius: 10,
+    marginTop: 10,
+  },
   vehicleInfo: {
     width: "95%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingLeft: 15,
   },
   detailsContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-    justifyContent: "center",
+    justifyContent: "space-between",
     alignItems: "center",
     backgroundColor: "#fff1",
     borderRadius: 10,
+    padding: 10,
   },
   detail: {
     flexDirection: "row",
@@ -160,6 +176,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginLeft: 10,
     width: 63,
+  },
+  priceText: {
+    color: "#fff",
+    fontSize: 18,
+    marginLeft: 10,
   },
   error: {
     color: "#cd4100",

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -16,7 +16,7 @@ import Icon from "react-native-vector-icons/FontAwesome5";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useRoute } from "@react-navigation/native";
 
-const RentVehicle = () => {
+const RentVehicle = ({ navigation }) => {
   const [vehicles, setVehicles] = useState([]);
   const [error, setError] = useState("");
   const [startDate, setStartDate] = useState(new Date());
@@ -100,6 +100,32 @@ const RentVehicle = () => {
     setShowVehicleList(false);
   };
 
+  const handleLogin = () => {
+    navigation.replace("Login");
+  };
+
+  useEffect(() => {
+    if (!userId) {
+      setError("You must login to use this page.");
+      return;
+    }
+
+    const fetchUserInfo = async () => {
+      try {
+        const response = await get(`/user/${userId}`);
+        if (response.success) {
+          setUserInfo(response.data);
+        } else {
+          setError(response.message || "Failed to fetch user data.");
+        }
+      } catch (error) {
+        setError("An error occurred while fetching user data.");
+      }
+    };
+
+    fetchUserInfo();
+  }, [userId]);
+
   const handlePayment = async () => {
     if (rentalDetails) {
       try {
@@ -170,69 +196,94 @@ const RentVehicle = () => {
         </TouchableOpacity>
       )}
       <View style={styles.panel}>
-        {!showVehicleList ? (
+        {userId ? (
           <>
-            <View style={styles.dateContainer}>
-              <Text style={styles.dateText}>Select Start Date</Text>
-              <TouchableOpacity
-                style={styles.dateButton}
-                onPress={() => setShowStartDatePicker(true)}
-              >
-                <Text style={styles.dateButtonText}>
-                  {startDate.toDateString()}
-                </Text>
-              </TouchableOpacity>
-              {showStartDatePicker && (
-                <DateTimePicker
-                  value={startDate}
-                  mode="date"
-                  textColor="white"
-                  display="default"
-                  onChange={(event, date) => handleDateChange(event, date)}
-                />
-              )}
-              <Text style={styles.dateText}>Select End Date</Text>
-              <TouchableOpacity
-                style={styles.dateButton}
-                onPress={() => setShowEndDatePicker(true)}
-              >
-                <Text style={styles.dateButtonText}>
-                  {endDate.toDateString()}
-                </Text>
-              </TouchableOpacity>
-              {showEndDatePicker && (
-                <DateTimePicker
-                  value={endDate}
-                  mode="date"
-                  textColor="white"
-                  display="default"
-                  onChange={(event, date) => handleDateChange(event, date)}
-                />
-              )}
-            </View>
-            <TouchableOpacity
-              style={styles.searchButton}
-              onPress={handleSearchVehicles}
-            >
-              <Text style={styles.searchButtonText}>Search Vehicles</Text>
-            </TouchableOpacity>
+            {!showVehicleList ? (
+              <>
+                <View style={styles.dateContainer}>
+                  <Text style={styles.dateText}>Select Start Date</Text>
+                  <TouchableOpacity
+                    style={styles.dateButton}
+                    onPress={() => setShowStartDatePicker(true)}
+                  >
+                    <Text style={styles.dateButtonText}>
+                      {startDate.toDateString()}
+                    </Text>
+                  </TouchableOpacity>
+                  {showStartDatePicker && (
+                    <DateTimePicker
+                      value={startDate}
+                      mode="date"
+                      textColor="white"
+                      display="default"
+                      onChange={(event, date) => handleDateChange(event, date)}
+                    />
+                  )}
+                  <Text style={styles.dateText}>Select End Date</Text>
+                  <TouchableOpacity
+                    style={styles.dateButton}
+                    onPress={() => setShowEndDatePicker(true)}
+                  >
+                    <Text style={styles.dateButtonText}>
+                      {endDate.toDateString()}
+                    </Text>
+                  </TouchableOpacity>
+                  {showEndDatePicker && (
+                    <DateTimePicker
+                      value={endDate}
+                      mode="date"
+                      textColor="white"
+                      display="default"
+                      onChange={(event, date) => handleDateChange(event, date)}
+                    />
+                  )}
+                </View>
+                <TouchableOpacity
+                  style={styles.searchButton}
+                  onPress={handleSearchVehicles}
+                >
+                  <Text style={styles.searchButtonText}>Search Vehicles</Text>
+                </TouchableOpacity>
+              </>
+            ) : (
+              <>
+                {loading ? (
+                  <ActivityIndicator size="large" color="#cd4100" />
+                ) : vehicles.length > 0 ? (
+                  <FlatList
+                    showsVerticalScrollIndicator={false}
+                    data={vehicles}
+                    renderItem={renderItem}
+                    keyExtractor={(item) => item.vehicle_id.toString()}
+                  />
+                ) : (
+                  <Text style={styles.error}>
+                    {error || "No vehicles available."}
+                  </Text>
+                )}
+              </>
+            )}
           </>
         ) : (
           <>
-            {loading ? (
-              <ActivityIndicator size="large" color="#cd4100" />
-            ) : vehicles.length > 0 ? (
-              <FlatList
-                showsVerticalScrollIndicator={false}
-                data={vehicles}
-                renderItem={renderItem}
-                keyExtractor={(item) => item.vehicle_id.toString()}
-              />
-            ) : (
-              <Text style={styles.error}>
-                {error || "No vehicles available."}
-              </Text>
-            )}
+            <TouchableOpacity
+              onPress={handleLogin}
+              style={{
+                height: 45,
+                width: "80%",
+                backgroundColor: "#cd4100",
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: 5,
+                marginTop: 10,
+                paddingHorizontal: 100,
+              }}
+            >
+              <Text style={{ color: "white" }}>Login</Text>
+            </TouchableOpacity>
+            {error ? (
+              <Text style={{ color: "#cd4100", marginTop: 15 }}>{error}</Text>
+            ) : null}
           </>
         )}
       </View>

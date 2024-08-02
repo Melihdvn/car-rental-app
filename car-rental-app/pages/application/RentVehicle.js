@@ -50,7 +50,11 @@ const RentVehicle = ({ navigation }) => {
         end_date: endDate.toISOString().split("T")[0], // Format as YYYY-MM-DD
       });
       if (response.success) {
-        setVehicles(response.vehicles || []);
+        if (vehicles) {
+          setVehicles(response.vehicles || []);
+        } else {
+          setError("No vehicles available.");
+        }
       } else {
         setError(response.message || "Failed to fetch vehicles.");
       }
@@ -109,21 +113,6 @@ const RentVehicle = ({ navigation }) => {
       setError("You must login to use this page.");
       return;
     }
-
-    const fetchUserInfo = async () => {
-      try {
-        const response = await get(`/user/${userId}`);
-        if (response.success) {
-          setUserInfo(response.data);
-        } else {
-          setError(response.message || "Failed to fetch user data.");
-        }
-      } catch (error) {
-        setError("An error occurred while fetching user data.");
-      }
-    };
-
-    fetchUserInfo();
   }, [userId]);
 
   const handlePayment = async () => {
@@ -154,8 +143,14 @@ const RentVehicle = ({ navigation }) => {
   const renderItem = ({ item }) => (
     <View style={styles.vehicleCard}>
       <Image source={getImage(item.image)} style={styles.vehicleImage} />
-      <View style={styles.vehicleInfo}>
-        <Text style={styles.makeModel}>{`${item.make} ${item.model}`}</Text>
+      <View style={styles.vehicleInfoContainer}>
+        <View style={styles.vehicleInfo}>
+          <Text style={styles.makeModel}>{`${item.make} ${item.model}`}</Text>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Icon name="dollar-sign" size={20} width={11} color="#cd4100" />
+            <Text style={styles.priceText}>{item.daily_rate} / day</Text>
+          </View>
+        </View>
         <View style={styles.detailsContainer}>
           <View style={styles.detail}>
             <Icon name="gas-pump" size={20} width={20} color="#cd4100" />
@@ -170,8 +165,8 @@ const RentVehicle = ({ navigation }) => {
             <Text style={styles.detailText}>{item.year}</Text>
           </View>
           <View style={styles.detail}>
-            <Icon name="dollar-sign" size={20} width={11} color="#cd4100" />
-            <Text style={styles.detailText}>{item.daily_rate} / day</Text>
+            <Icon name="tachometer-alt" size={20} width={24} color="#cd4100" />
+            <Text style={styles.detailText}>{item.kilometers} km</Text>
           </View>
         </View>
         <TouchableOpacity
@@ -348,20 +343,6 @@ const styles = StyleSheet.create({
     height: "100%",
     alignItems: "center",
   },
-  panel: {
-    width: "100%",
-    backgroundColor: "#222f",
-    borderRadius: 20,
-    padding: 20,
-    marginTop: "20%",
-    alignItems: "center",
-    justifyContent: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
   dateContainer: {
     width: "100%",
     marginBottom: 20,
@@ -395,55 +376,72 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
   },
-  vehicleCard: {
-    backgroundColor: "#333",
-    marginBottom: 15,
-    borderRadius: 10,
+  panel: {
     width: "100%",
-    overflow: "hidden",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 2,
-    justifyContent: "center",
+    height: "100%",
+    backgroundColor: "rgba(34, 34, 34, 0.95)",
+    borderRadius: 20,
+    paddingHorizontal: 20,
+    marginTop: 75,
+    alignItems: "center",
+  },
+  vehicleCard: {
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    borderRadius: 20,
+    padding: 15,
+    marginVertical: 11,
+    width: "100%",
     alignItems: "center",
   },
   vehicleImage: {
-    width: "80%",
+    height: 150,
+    width: "88%",
     resizeMode: "contain",
-    height: 160,
-  },
-  vehicleInfo: {
-    padding: 5,
-    alignItems: "center",
-    justifyContent: "center",
+    borderRadius: 10,
   },
   makeModel: {
-    color: "#fff",
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "bold",
-    marginVertical: 8,
+    color: "#fff",
+    marginVertical: 10,
+  },
+  vehicleInfoContainer: {
+    backgroundColor: "#fff1",
+    borderRadius: 10,
+    marginTop: 10,
+  },
+  vehicleInfo: {
+    width: "95%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingLeft: 15,
   },
   detailsContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-    justifyContent: "center",
-    width: "100%",
-    backgroundColor: "#444",
-    paddingHorizontal: 2,
-    borderRadius: 10,
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "#fff1",
+    padding: 10,
   },
   detail: {
     flexDirection: "row",
-    alignSelf: "center",
     alignItems: "center",
-    marginVertical: 10,
+    justifyContent: "center",
+    paddingHorizontal: 5,
+    marginBottom: 7,
   },
   detailText: {
-    color: "#ccc",
-    marginHorizontal: 10,
-    flexShrink: 1,
+    color: "#fff",
+    fontSize: 16,
+    marginLeft: 10,
+    width: 63,
+  },
+  priceText: {
+    color: "#fff",
+    fontSize: 18,
+    marginLeft: 10,
   },
   rentButton: {
     backgroundColor: "#cd4100",
@@ -480,9 +478,10 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   modalImage: {
-    width: "100%",
-    height: 150,
-    marginBottom: 10,
+    height: 200,
+    width: "88%",
+    resizeMode: "contain",
+    borderRadius: 10,
   },
   modalText: {
     color: "#fff",
@@ -523,6 +522,7 @@ const styles = StyleSheet.create({
     padding: 5,
     borderRadius: 5,
     marginTop: 35,
+    zIndex: 2,
   },
   returnButtonText: {
     color: "#fff",

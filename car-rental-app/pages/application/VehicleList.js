@@ -78,10 +78,6 @@ const VehicleList = () => {
             <Icon name="tachometer-alt" size={20} width={24} color="#cd4100" />
             <Text style={styles.detailText}>{item.kilometers} km</Text>
           </View>
-          {/*           <View style={styles.detail}>
-            <Icon name="dollar-sign" size={20} width={11} color="#cd4100" />
-            <Text style={styles.detailText}>{item.daily_rate} / day</Text>
-          </View> */}
         </View>
       </View>
     </View>
@@ -119,7 +115,7 @@ const styles = StyleSheet.create({
     height: "100%",
     backgroundColor: "rgba(34, 34, 34, 0.95)",
     borderRadius: 20,
-    padding: 20,
+    paddingHorizontal: 20,
     marginTop: 50,
     alignItems: "center",
   },
@@ -127,7 +123,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.05)",
     borderRadius: 20,
     padding: 15,
-    marginBottom: 25,
+    marginVertical: 11,
     width: "100%",
     alignItems: "center",
   },

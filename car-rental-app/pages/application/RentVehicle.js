@@ -346,6 +346,7 @@ const styles = StyleSheet.create({
   dateContainer: {
     width: "100%",
     marginBottom: 20,
+    marginTop: 170,
     alignItems: "center",
   },
   dateText: {

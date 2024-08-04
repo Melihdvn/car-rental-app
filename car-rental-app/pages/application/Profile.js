@@ -25,7 +25,7 @@ const Profile = ({ navigation }) => {
 
   useEffect(() => {
     if (!userId) {
-      setError("You must register to use this page.");
+      setError("You must login to use this page.");
       return;
     }
 
@@ -45,8 +45,8 @@ const Profile = ({ navigation }) => {
     fetchUserInfo();
   }, [userId]);
 
-  const handleRegister = () => {
-    navigation.replace("Register");
+  const handleLogin = () => {
+    navigation.replace("Login");
   };
 
   const handleEdit = async () => {
@@ -162,7 +162,7 @@ const Profile = ({ navigation }) => {
           </View>
         ) : (
           <TouchableOpacity
-            onPress={handleRegister}
+            onPress={handleLogin}
             style={{
               height: 45,
               width: "80%",
@@ -174,7 +174,7 @@ const Profile = ({ navigation }) => {
               paddingHorizontal: 100,
             }}
           >
-            <Text style={{ color: "white" }}>Register</Text>
+            <Text style={{ color: "white" }}>Login</Text>
           </TouchableOpacity>
         )}
         {error ? <Text style={styles.error}>{error}</Text> : null}

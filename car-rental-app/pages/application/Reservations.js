@@ -220,9 +220,10 @@ const styles = StyleSheet.create({
   scrollViewContent: {
     paddingTop: 50,
     paddingBottom: 20,
+    alignItems: "center",
   },
   infoContainer: {
-    width: "95%",
+    width: "100%",
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
@@ -234,7 +235,7 @@ const styles = StyleSheet.create({
     borderColor: "rgba(255, 255, 255, 0.2)",
     padding: 15,
     marginBottom: 10,
-    width: "48%",
+    width: 175,
     minHeight: 180,
     justifyContent: "space-between",
   },
@@ -263,7 +264,7 @@ const styles = StyleSheet.create({
   },
   loginButton: {
     height: 45,
-    width: "80%",
+    width: 200,
     backgroundColor: "#cd4100",
     alignItems: "center",
     justifyContent: "center",
@@ -273,7 +274,6 @@ const styles = StyleSheet.create({
   loginButtonText: {
     color: "white",
     fontSize: 16,
-    fontWeight: "bold",
   },
   error: {
     color: "#cd4100",

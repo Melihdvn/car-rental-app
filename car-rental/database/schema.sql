@@ -1,5 +1,5 @@
 --
--- File generated with SQLiteStudio v3.4.4 on Fri Jul 26 13:31:37 2024
+-- File generated with SQLiteStudio v3.4.4 on Sun Aug 4 22:03:46 2024
 --
 -- Text encoding used: System
 --
@@ -33,6 +33,8 @@ CREATE TABLE reservation_services (
     reservation_id        INTEGER  NOT NULL,
     additional_service_id INTEGER  NOT NULL
                                    REFERENCES additional_services (additional_service_id),
+    name,
+    price,
     created_at            DATETIME,
     updated_at            DATETIME,
     FOREIGN KEY (
@@ -89,6 +91,7 @@ CREATE TABLE vehicles (
     is_active    TINYINT (1) NOT NULL
                              DEFAULT '1',
     daily_rate   NUMERIC     NOT NULL,
+    image,
     created_at   DATETIME,
     updated_at   DATETIME
 );

@@ -45,6 +45,18 @@ class Reservation extends Model
         ->get();
     }
 
+    public static function getExactReservation($user_id, $vehicle_id, $start_date, $end_date)
+    {
+        return DB::table('reservations')
+            ->where('user_id', $user_id)
+            ->where('vehicle_id', $vehicle_id)
+            ->where('start_date', $start_date)
+            ->where('end_date',  $end_date)
+            ->select('*')
+            ->get();
+    }
+
+
     public static function checkAvailability($vehicle_id, $start_date, $end_date) {
         return !DB::table('reservations')
             ->where('vehicle_id', $vehicle_id)

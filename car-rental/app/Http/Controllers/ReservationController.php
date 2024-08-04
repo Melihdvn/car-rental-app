@@ -52,9 +52,12 @@ class ReservationController extends Controller
 
         $result = Reservation::createReservation($request->user_id, $request->vehicle_id, $request->start_date, $request->end_date, $request->total_price);
 
+        $reservation = Reservation::getExactReservation($request->user_id, $request->vehicle_id, $request->start_date, $request->end_date, $request->total_price);
+
         if ($result) {
             return response()->json([
                 'success' => true,
+                'reservation' => $reservation,
                 'message' => 'Reservation created successfully.',
             ], 200);
         }

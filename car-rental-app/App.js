@@ -10,6 +10,7 @@ import Profile from "./pages/application/Profile";
 import VehicleList from "./pages/application/VehicleList";
 import RentVehicle from "./pages/application/RentVehicle";
 import Reservations from "./pages/application/Reservations";
+import Payments from "./pages/application/Payments";
 
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
@@ -34,6 +35,11 @@ export default function App() {
           options={{ headerShown: false }}
           name="HomeTabs"
           component={HomeTabs}
+        />
+        <Stack.Screen
+          options={{ headerShown: false }}
+          name="Payments"
+          component={Payments}
         />
       </Stack.Navigator>
     </NavigationContainer>

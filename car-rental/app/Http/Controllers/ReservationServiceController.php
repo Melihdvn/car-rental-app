@@ -13,6 +13,8 @@ class ReservationServiceController extends Controller
         $validator = Validator::make($request->all(), [
             'reservation_id' => 'required|exists:reservations,reservation_id',
             'service_id' => 'required|exists:additional_services,additional_service_id',
+            'name' => 'required',
+            'price' => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -23,7 +25,7 @@ class ReservationServiceController extends Controller
             ], 200);
         }
 
-        $result = ReservationService::addServiceToReservation($request->reservation_id, $request->service_id);
+        $result = ReservationService::addServiceToReservation($request->reservation_id, $request->service_id, $request->name, $request->price);
 
         if ($result) {
             return response()->json([
@@ -54,10 +56,48 @@ class ReservationServiceController extends Controller
         $services = ReservationService::getReservationServices($request->reservation_id);
 
         if ($services) {
-            return response()->json($services, 200);
+            return response()->json([
+                'success' => true,
+                'services' => $services,
+            ], 200);
         } else {
             return response()->json([
+                'success' => false,
                 'message' => 'Reservation doesn\'t have any additional services.',
+            ], 200);
+        }
+    }
+
+    public function getAllReservationServices(Request $request)
+    {
+        $services = ReservationService::getAllReservationServices();
+
+        if ($services) {
+            return response()->json([
+                'success' => true,
+                'services' => $services,
+            ], 200);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'No services available.',
+            ], 200);
+        }
+    }
+
+    public function getAllServices(Request $request)
+    {
+        $services = ReservationService::getAllServices();
+
+        if ($services) {
+            return response()->json([
+                'success' => true,
+                'services' => $services,
+            ], 200);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'No services available.',
             ], 200);
         }
     }

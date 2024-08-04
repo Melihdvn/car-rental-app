@@ -31,3 +31,6 @@ Route::post('/getvehiclesondate', [ReservationController::class, 'getAvailableVe
 
 Route::post('/addservice', [ReservationServiceController::class, 'addServiceToReservation']);
 Route::post('/getservices', [ReservationServiceController::class, 'getServices']);
+Route::get('/getallservices', [ReservationServiceController::class, 'getAllServices']);
+Route::get('/getallreservationservices', [ReservationServiceController::class, 'getAllReservationServices']);
+

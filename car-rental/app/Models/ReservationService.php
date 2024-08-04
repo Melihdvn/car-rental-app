@@ -16,13 +16,15 @@ class ReservationService extends Model
         'additional_service_id',
     ];
 
-    public static function addServiceToReservation($reservation_id, $additional_service_id)
+    public static function addServiceToReservation($reservation_id, $additional_service_id, $name, $price)
     {
         $isAvailable = ReservationService::checkAvailability($reservation_id, $additional_service_id);
         if ($isAvailable) {
             return DB::table('reservation_services')->insert([
                 'reservation_id' => $reservation_id,
                 'additional_service_id' => $additional_service_id,
+                'name' => $name,
+                'price' => $price,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
@@ -49,6 +51,20 @@ class ReservationService extends Model
     public static function getReservationServices($reservation_id)
     {
         return DB::table('reservation_services')->where('reservation_id', $reservation_id)
+        ->select('*')
+        ->get();
+    }
+
+    public static function getAllReservationServices()
+    {
+        return DB::table('reservation_services')
+        ->select('*')
+        ->get();
+    }
+
+    public static function getAllServices()
+    {
+        return DB::table('additional_services')
         ->select('*')
         ->get();
     }

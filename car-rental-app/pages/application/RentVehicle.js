@@ -97,7 +97,7 @@ const RentVehicle = ({ navigation }) => {
       endDate,
       totalPrice,
     });
-    setModalVisible(true); // Show the modal with rental details
+    setModalVisible(true);
   };
 
   const handleReturn = () => {
@@ -115,28 +115,15 @@ const RentVehicle = ({ navigation }) => {
     }
   }, [userId]);
 
-  const handlePayment = async () => {
+  const handlePayment = () => {
     if (rentalDetails) {
-      try {
-        const response = await post("/createreservation", {
-          user_id: userId,
-          vehicle_id: rentalDetails.vehicle.vehicle_id,
-          start_date: rentalDetails.startDate.toISOString().split("T")[0],
-          end_date: rentalDetails.endDate.toISOString().split("T")[0],
-          total_price: rentalDetails.totalPrice,
-        });
-
-        if (response.success) {
-          alert("Reservation created successfully.");
-          setRentalDetails(null);
-          setModalVisible(false);
-          fetchVehicles();
-        } else {
-          alert(response.message || "Failed to create reservation.");
-        }
-      } catch (error) {
-        alert("An error occurred while creating the reservation.");
-      }
+      navigation.navigate("Payments", { userId, rentalDetails });
+      setRentalDetails(null);
+      setModalVisible(false);
+      fetchVehicles();
+      setShowVehicleList(false);
+    } else {
+      alert("Rental details are missing.");
     }
   };
 

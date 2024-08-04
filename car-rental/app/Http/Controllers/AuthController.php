@@ -135,7 +135,10 @@ class AuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 400);
+            return response()->json([
+                'success' => true,
+                'message' => $validator->errors(),
+            ], 200);
         }
 
         $codeEntry = VerificationCode::codeEntry($request->email, $request->code, 'password');

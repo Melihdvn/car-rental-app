@@ -45,6 +45,7 @@ const RentVehicle = ({ navigation }) => {
   const fetchVehicles = async () => {
     setLoading(true);
     try {
+      setVehicles([]);
       const response = await post("/getvehiclesondate", {
         start_date: startDate.toISOString().split("T")[0], // Format as YYYY-MM-DD
         end_date: endDate.toISOString().split("T")[0], // Format as YYYY-MM-DD

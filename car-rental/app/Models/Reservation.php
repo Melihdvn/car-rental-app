@@ -90,7 +90,8 @@ class Reservation extends Model
 
         $availableVehicles = DB::table('vehicles')
             ->whereNotIn('vehicle_id', $reservedVehicles)
-            ->where('is_active', 1) // Optional: to ensure the vehicle is active
+            ->where('is_active', 1)
+            ->orderBy('make', 'asc')
             ->select('*')
             ->get();
 

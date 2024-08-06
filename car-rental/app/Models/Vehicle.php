@@ -41,7 +41,7 @@ class Vehicle extends Model
     public static function getVehicles()
     {
         return DB::table('vehicles')
-        ->select('*')
+        ->orderBy('make', 'asc')
         ->get();
     }
 }

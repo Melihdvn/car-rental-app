@@ -35,6 +35,11 @@ const RentVehicle = ({ navigation }) => {
     const currentDate = selectedDate || new Date();
     if (showStartDatePicker) {
       setStartDate(currentDate);
+
+      const nextDay = new Date(currentDate);
+      nextDay.setDate(currentDate.getDate() + 1);
+      setEndDate(nextDay);
+
       setShowStartDatePicker(false);
     } else {
       setEndDate(currentDate);
@@ -220,7 +225,7 @@ const RentVehicle = ({ navigation }) => {
                       display="default"
                       accentColor="#cd4100"
                       themeVariant="dark"
-                      minimumDate={new Date()}
+                      minimumDate={startDate}
                       onChange={(event, date) => handleDateChange(event, date)}
                     />
                   )}

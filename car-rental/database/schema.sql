@@ -1,5 +1,5 @@
 --
--- File generated with SQLiteStudio v3.4.4 on Sun Aug 4 22:03:46 2024
+-- File generated with SQLiteStudio v3.4.4 on Tue Aug 6 16:40:26 2024
 --
 -- Text encoding used: System
 --
@@ -23,6 +23,22 @@ CREATE TABLE migrations (
                       NOT NULL,
     migration VARCHAR NOT NULL,
     batch     INTEGER NOT NULL
+);
+
+
+-- Table: payments
+CREATE TABLE payments (
+    payment_id     INTEGER  PRIMARY KEY AUTOINCREMENT,
+    user_id        INTEGER  NOT NULL,
+    amount         REAL     NOT NULL,
+    payment_method TEXT     NOT NULL,
+    status         TEXT     DEFAULT 'pending',
+    created_at     DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at     DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (
+        user_id
+    )
+    REFERENCES users (user_id) 
 );
 
 

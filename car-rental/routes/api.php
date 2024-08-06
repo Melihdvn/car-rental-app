@@ -7,6 +7,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\ReservationServiceController;
 use App\Http\Controllers\VehicleController;
+use App\Http\Controllers\PaymentController;
 
 
 Route::post('/register', [AuthController::class, 'register']);
@@ -33,4 +34,7 @@ Route::post('/addservice', [ReservationServiceController::class, 'addServiceToRe
 Route::post('/getservices', [ReservationServiceController::class, 'getServices']);
 Route::get('/getallservices', [ReservationServiceController::class, 'getAllServices']);
 Route::get('/getallreservationservices', [ReservationServiceController::class, 'getAllReservationServices']);
+
+Route::post('/payment', [PaymentController::class, 'createPayment']);
+
 

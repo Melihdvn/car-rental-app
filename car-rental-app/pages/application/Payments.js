@@ -75,7 +75,27 @@ const PaymentScreen = ({ route, navigation }) => {
   };
 
   const validateExpirationDate = (date) => {
-    return /^(0[1-9]|1[0-2])\/\d{2}$/.test(date);
+    if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(date)) return false;
+    const [month, year] = date.split("/").map(Number);
+    const currentYear = new Date().getFullYear() % 100; // Get last 2 digits of the year
+    const currentMonth = new Date().getMonth() + 1; // getMonth() is 0-indexed
+    return year > currentYear || (year === currentYear && month > currentMonth);
+  };
+
+  const handleCreditCardNumberChange = (number) => {
+    const cleanNumber = number.replace(/\D/g, "");
+
+    const formattedNumber = cleanNumber.replace(/(.{4})/g, "$1 ").trim();
+
+    setCreditCardNumber(formattedNumber);
+  };
+
+  const handleExpirationDateChange = (date) => {
+    if (date.length === 2 && !date.includes("/")) {
+      setExpirationDate(date + "/");
+    } else {
+      setExpirationDate(date);
+    }
   };
 
   const handlePayment = async () => {
@@ -93,7 +113,23 @@ const PaymentScreen = ({ route, navigation }) => {
     }
 
     setLoading(true);
+    setError("");
+
     try {
+      const paymentResponse = await post("/payment", {
+        user_id: userId,
+        amount: calculateTotalPrice(),
+        credit_card_number: creditCardNumber,
+        cvv: cvv,
+        expire_date: expirationDate,
+      });
+
+      if (!paymentResponse.success) {
+        throw new Error(
+          paymentResponse.message || "Failed to process payment."
+        );
+      }
+
       const reservationResponse = await post("/createreservation", {
         user_id: userId,
         vehicle_id: vehicle.vehicle_id,
@@ -102,30 +138,34 @@ const PaymentScreen = ({ route, navigation }) => {
         total_price: calculateTotalPrice(),
       });
 
-      if (reservationResponse.success) {
-        const reservationId = reservationResponse.reservation[0].reservation_id;
+      if (!reservationResponse.success) {
+        throw new Error(
+          reservationResponse.message || "Failed to create reservation."
+        );
+      }
 
-        await Promise.all(
-          selectedServices.map(async (additional_service_id) => {
-            const service = allServices.find(
-              (s) => s.additional_service_id === additional_service_id
-            );
+      const reservationId = reservationResponse.reservation[0].reservation_id;
+
+      await Promise.all(
+        selectedServices.map(async (additional_service_id) => {
+          const service = allServices.find(
+            (s) => s.additional_service_id === additional_service_id
+          );
+          if (service) {
             await post("/addservice", {
               reservation_id: reservationId,
               service_id: additional_service_id,
-              name: service?.name,
-              price: service?.price,
+              name: service.name,
+              price: service.price,
             });
-          })
-        );
+          }
+        })
+      );
 
-        alert("Reservation created successfully.");
-        navigation.navigate("HomeTabs");
-      } else {
-        alert(reservationResponse.message || "Failed to create reservation.");
-      }
+      alert("Reservation created successfully.");
+      navigation.navigate("HomeTabs");
     } catch (error) {
-      alert("An error occurred while creating the reservation.");
+      alert(`An error occurred: ${error.message}`);
     } finally {
       setLoading(false);
       setModalVisible(false);
@@ -202,7 +242,7 @@ const PaymentScreen = ({ route, navigation }) => {
               style={styles.input}
               placeholder="Credit Card Number"
               value={creditCardNumber}
-              onChangeText={setCreditCardNumber}
+              onChangeText={handleCreditCardNumberChange}
               keyboardType="numeric"
               maxLength={19}
               placeholderTextColor="#888"
@@ -221,7 +261,8 @@ const PaymentScreen = ({ route, navigation }) => {
                 style={[styles.input, styles.smallInput]}
                 placeholder="MM/YY"
                 value={expirationDate}
-                onChangeText={setExpirationDate}
+                onChangeText={handleExpirationDateChange}
+                keyboardType="numeric"
                 maxLength={5}
                 placeholderTextColor="#888"
               />
